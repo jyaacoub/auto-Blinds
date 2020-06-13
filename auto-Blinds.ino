@@ -68,8 +68,7 @@ void userMode(){
   }else if ((light > lightSunny) || (light < lightNight)){
     if (checks >= 3){
       // Closing blinds:
-      tiltBlinds(CLOSED);
-      checks = 0;
+      tiltBlinds(CLOSED); // check isnt reset to zero so it doesnt go up and down due to clouds
     } else {
       checks += 1;
     }
