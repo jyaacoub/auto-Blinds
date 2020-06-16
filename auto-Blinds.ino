@@ -32,6 +32,7 @@ decode_results results;
 unsigned long key_value = 0;
 
 boolean automatic = true;
+int newPos = 0;
 
 void setup(){
   Serial.begin(9600);
@@ -40,16 +41,17 @@ void setup(){
   digitalWrite(13, LOW);   
   
   irrecv.enableIRIn();
-  attachInterrupt(digitalPinToInterrupt(RECV_PIN), readIRSignal ,RISING);
+  attachInterrupt(digitalPinToInterrupt(RECV_PIN), readIRSignal, RISING);
 }
  
 void loop(){
   if (automatic){
-    autoMode();
     Serial.println("AUTO");
+    autoMode();
+    newPos = blindsPos;
   } else{
     manualMode();
-    Serial.println("Manual");
+    Serial.println("MANUAL");
     delay(500);
   }
 }
@@ -98,21 +100,20 @@ void readIRSignal(){
           break ;
         case 0xFF10EF:
           Serial.println("-Bright");
-          tiltBlinds(blindsPos-1);
+          newPos = blindsPos + 1;
           break ;
         case 0xFF5AA5:
           Serial.println("+Bright");
-          tiltBlinds(blindsPos+1);
+          newPos = blindsPos - 1;
           break ;      
       }
       key_value = results.value;
       irrecv.resume(); 
-      
   }
 }
 
 void manualMode(){
-  
+  tiltBlinds(newPos);
 }
 
 // Leaves the blinds to be controlled by the light intensity
