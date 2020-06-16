@@ -50,12 +50,11 @@ void loop(){
 //  delay(100);
 //  autoMode();
   Serial.println("Performing a long process...");
-  delay(3000);
+  delay(10000);
 }
 
 void readIRSignal(){
     if (irrecv.decode(&results)){
-      Serial.println(results.value);
       if (results.value == 0XFFFFFFFF)
         results.value = key_value;
 
