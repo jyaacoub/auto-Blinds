@@ -46,8 +46,11 @@ void setup(){
 void loop(){
   if (automatic){
     autoMode();
+    Serial.println("AUTO");
   } else{
     manualMode();
+    Serial.println("Manual");
+    delay(500);
   }
 }
 
@@ -104,6 +107,7 @@ void readIRSignal(){
       }
       key_value = results.value;
       irrecv.resume(); 
+      
   }
 }
 
