@@ -16,7 +16,7 @@ Stepper steppermotor(STEPS_PER_REV, 8, 10, 9, 11);
 // Positioning constants
 int blindsPos = 0;
 int checks = 0;
-const int CLOSED = 12; // The netSteps value for the blinds to be closed.
+const int CLOSED = 11; // The netSteps value for the blinds to be closed.
 
 // Threshold constants:
 const int lightSunny = 400;
@@ -38,7 +38,7 @@ void setup(){
   Serial.begin(9600);
   // turning off onboard light
   pinMode(13, OUTPUT);
-  digitalWrite(13, LOW);   
+  digitalWrite(13, LOW); 
   
   irrecv.enableIRIn();
   attachInterrupt(digitalPinToInterrupt(RECV_PIN), readIRSignal, RISING);
@@ -76,6 +76,7 @@ void readIRSignal(){
         case 0xFF22DD:
           Serial.println("1");
           blindsPos = 0;
+          newPos = 0;
           break;
         case 0xFFC23D:
           Serial.println("2");
@@ -159,7 +160,6 @@ int getAverageLightIntensity(int timePeriod){
 
 // pos 0 == blinds are horizontal
 void tiltBlinds(int pos){
-  Serial.println("\t TILTING");
   // The dif is also equal to the num steps to take.
   int dif = pos - blindsPos;
  
