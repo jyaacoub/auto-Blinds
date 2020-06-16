@@ -26,7 +26,7 @@ const int lightNight = 30; // Not 0, to stop room lights from keeping it open
 
 // IR stuff
 #include <IRremote.h>  //including infrared remote header file     
-int RECV_PIN = 7; // the pin where you connect the output pin of IR sensor     
+int RECV_PIN = 3; // the pin where you connect the output pin of IR sensor     
 IRrecv irrecv(RECV_PIN);     
 decode_results results;
 unsigned long key_value = 0;
@@ -41,10 +41,20 @@ void setup(){
   
   irrecv.enableIRIn();
 //tiltBlinds(-CLOSED);
+
+  attachInterrupt(digitalPinToInterrupt(RECV_PIN), readIRSignal ,RISING);
 }
  
-void loop(){
-  if (irrecv.decode(&results)){
+void loop(){  
+//  Serial.println(analogRead(LIGHT_SENSOR));
+//  delay(100);
+//  autoMode();
+  Serial.println("Performing a long process...");
+  delay(3000);
+}
+
+void readIRSignal(){
+    if (irrecv.decode(&results)){
       Serial.println(results.value);
       if (results.value == 0XFFFFFFFF)
         results.value = key_value;
@@ -93,10 +103,6 @@ void loop(){
       key_value = results.value;
       irrecv.resume(); 
   }
-  
-//  Serial.println(analogRead(LIGHT_SENSOR));
-//  delay(100);
-//  autoMode();
 }
 
 void manualMode(){
