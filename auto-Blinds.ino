@@ -45,7 +45,7 @@ void setup(){
  
 void loop(){
   if (irrecv.decode(&results)){
-      Serial.println(results.value);
+    
       if (results.value == 0XFFFFFFFF)
         results.value = key_value;
 
