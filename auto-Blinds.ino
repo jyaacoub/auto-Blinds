@@ -33,7 +33,7 @@ void setup(){
   // turning off onboard light
   pinMode(13, OUTPUT);
   digitalWrite(13, LOW);
-  
+//  tiltBlinds(-1);
 //tiltBlinds(-CLOSED);
 }
  
