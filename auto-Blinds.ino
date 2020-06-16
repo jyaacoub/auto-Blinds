@@ -100,11 +100,11 @@ void readIRSignal(){
           break ;
         case 0xFF10EF:
           Serial.println("-Bright");
-          newPos = blindsPos + 1;
+          newPos = blindsPos - 1;
           break ;
         case 0xFF5AA5:
           Serial.println("+Bright");
-          newPos = blindsPos - 1;
+          newPos = blindsPos + 1;
           break ;      
       }
       key_value = results.value;
@@ -113,6 +113,7 @@ void readIRSignal(){
 }
 
 void manualMode(){
+  Serial.println(newPos);
   tiltBlinds(newPos);
 }
 
@@ -158,16 +159,18 @@ int getAverageLightIntensity(int timePeriod){
 
 // pos 0 == blinds are horizontal
 void tiltBlinds(int pos){
+  Serial.println("\t TILTING");
   // The dif is also equal to the num steps to take.
   int dif = pos - blindsPos;
  
-  if (dif != 0 && 
-    (-CLOSED >= pos && pos <= CLOSED)){ // So it doesnt break the tilt mech.
+  if (dif != 0){ // So it doesnt break the tilt mech.
     if (dif < 0){
       // Opening Blinds (going down)
+      Serial.println("\t\t Down");
       turnMotor(1, abs(dif));
     } else {
       // Closing Blinds (going up)
+      Serial.println("\t\t Up");
       turnMotor(0, abs(dif));
     }
   }
