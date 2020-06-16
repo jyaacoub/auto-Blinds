@@ -31,8 +31,8 @@ IRrecv irrecv(RECV_PIN);
 decode_results results;
 unsigned long key_value = 0;
 
-const int auto_manual_switch;
-const int numbers;
+boolean automatic = true;
+
 void setup(){
   Serial.begin(9600);
   // turning off onboard light
@@ -40,17 +40,15 @@ void setup(){
   digitalWrite(13, LOW);   
   
   irrecv.enableIRIn();
-//tiltBlinds(-CLOSED);
-
   attachInterrupt(digitalPinToInterrupt(RECV_PIN), readIRSignal ,RISING);
 }
  
-void loop(){  
-//  Serial.println(analogRead(LIGHT_SENSOR));
-//  delay(100);
-//  autoMode();
-  Serial.println("Performing a long process...");
-  delay(10000);
+void loop(){
+  if (automatic){
+    autoMode();
+  } else{
+    manualMode();
+  }
 }
 
 void readIRSignal(){
@@ -61,15 +59,18 @@ void readIRSignal(){
       switch(results.value){
         case 0xFFA25D:
           Serial.println("ON");
+          automatic = true;
           break;
         case 0xFF629D:
           Serial.println("TIMER");
           break;
         case 0xFFE21D:
           Serial.println("OFF");
+          automatic = false;
           break;
         case 0xFF22DD:
           Serial.println("1");
+          blindsPos = 0;
           break;
         case 0xFFC23D:
           Serial.println("2");
@@ -94,9 +95,11 @@ void readIRSignal(){
           break ;
         case 0xFF10EF:
           Serial.println("-Bright");
+          tiltBlinds(blindsPos-1);
           break ;
         case 0xFF5AA5:
           Serial.println("+Bright");
+          tiltBlinds(blindsPos+1);
           break ;      
       }
       key_value = results.value;
@@ -153,7 +156,8 @@ void tiltBlinds(int pos){
   // The dif is also equal to the num steps to take.
   int dif = pos - blindsPos;
  
-  if (dif != 0){
+  if (dif != 0 && 
+    (-CLOSED >= pos && pos <= CLOSED)){ // So it doesnt break the tilt mech.
     if (dif < 0){
       // Opening Blinds (going down)
       turnMotor(1, abs(dif));
