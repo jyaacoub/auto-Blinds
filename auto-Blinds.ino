@@ -45,7 +45,10 @@ void setup(){
  
 void loop(){
   if (irrecv.decode(&results)){
-      Serial.println(results.value);
+    int val = results.value;
+    if (val != 8 && val != 0XFFFFFFFF){
+      Serial.println(results.value, HEX);
+    }
 //      if (results.value == 0XFFFFFFFF)
 //        results.value = key_value;
 //
@@ -115,10 +118,10 @@ void loop(){
 //        break ;      
 //      }
 //      key_value = results.value;
-//      irrecv.resume(); 
+      irrecv.resume(); 
   }
   
-  Serial.println(analogRead(LIGHT_SENSOR));
+//  Serial.println(analogRead(LIGHT_SENSOR));
   delay(100);
 //  autoMode();
 }
