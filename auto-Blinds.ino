@@ -95,9 +95,11 @@ void readIRSignal(){
           break ;
         case 0xFF30CF:
           Serial.println("7");
+          newPos = 0; // opens
           break ;
         case 0xFF7A85:
           Serial.println("8");
+          newPos = CLOSED;
           break ;
         case 0xFF10EF:
           Serial.println("-Bright");
