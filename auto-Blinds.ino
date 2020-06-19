@@ -51,72 +51,76 @@ void loop(){
     newPos = blindsPos;
   } else{
     manualMode();
-    Serial.println("MANUAL");
+//    Serial.println("MANUAL");
     delay(500);
   }
 }
 
 void readIRSignal(){
-    if (irrecv.decode(&results)){
-      if (results.value == 0XFFFFFFFF)
-        results.value = key_value;
+//  delay(1);
+  if (irrecv.decode(&results)){
+//    Serial.println("INTERRUPT");
+    Serial.println(results.value, HEX);
+    
+    if (results.value == 0XFFFFFFFF)
+      results.value = key_value;
 
-      switch(results.value){
-        case 0xFFA25D:
-          Serial.println("ON");
-          automatic = true;
-          break;
-        case 0xFF629D:
-          Serial.println("TIMER");
-          break;
-        case 0xFFE21D:
-          Serial.println("OFF");
-          automatic = false;
-          break;
-        case 0xFF22DD:
-          Serial.println("1");
-          blindsPos = 0;
-          newPos = 0;
-          break;
-        case 0xFFC23D:
-          Serial.println("2");
-          break ;               
-        case 0xFFE01F:
-          Serial.println("3");
-          break ;  
-        case 0xFF906F:
-          Serial.println("4");
-          break ;  
-        case 0xFF6897:
-          Serial.println("5");
-          break ;
-        case 0xFFB04F:
-          Serial.println("6");
-          break ;
-        case 0xFF30CF:
-          Serial.println("7");
-          newPos = CLOSED; 
-          break ;
-        case 0xFF7A85:
-          Serial.println("8");
-          newPos = 0; //  Opens
-          break ;
-        case 0xFF10EF:
-          Serial.println("-Bright");
-          newPos = blindsPos - 1;
-          break ;
-        case 0xFF5AA5:
-          Serial.println("+Bright");
-          newPos = blindsPos + 1;
-          break ;      
-      }
-      key_value = results.value;
-      irrecv.resume(); 
+    switch(results.value){
+      case 0xFFA25D:
+        Serial.println("ON");
+        automatic = true;
+        break;
+      case 0xFF629D:
+        Serial.println("TIMER");
+        break;
+      case 0xFFE21D:
+        Serial.println("OFF");
+        automatic = false;
+        break;
+      case 0xFF22DD:
+        Serial.println("1");
+        blindsPos = 0;
+        newPos = 0;
+        break;
+      case 0xFFC23D:
+        Serial.println("2");
+        break ;               
+      case 0xFFE01F:
+        Serial.println("3");
+        break ;  
+      case 0xFF906F:
+        Serial.println("4");
+        break ;  
+      case 0xFF6897:
+        Serial.println("5");
+        break ;
+      case 0xFFB04F:
+        Serial.println("6");
+        break ;
+      case 0xFF30CF:
+        Serial.println("7");
+        newPos = 0; 
+        break ;
+      case 0xFF7A85:
+        Serial.println("8");
+        newPos = CLOSED; //  Opens
+        break ;
+      case 0xFF10EF:
+        Serial.println("-Bright");
+        newPos = blindsPos - 1;
+        break ;
+      case 0xFF5AA5:
+        Serial.println("+Bright");
+        newPos = blindsPos + 1;
+        break ;      
+    }
+    key_value = results.value;
+    irrecv.resume(); 
   }
 }
 
 void manualMode(){
-  Serial.println(newPos);
+//  Serial.println(newPos);
   tiltBlinds(newPos);
 }
 
@@ -165,7 +169,7 @@ void tiltBlinds(int pos){
   // The dif is also equal to the num steps to take.
   int dif = pos - blindsPos;
  
-  if (dif != 0){ // So it doesnt break the tilt mech.
+  if ((dif != 0) && (pos >= -CLOSED) && (pos<= CLOSED)){ // So it doesnt break the tilt mech.
     if (dif < 0){
       // Opening Blinds (going down)
       Serial.println("\t\t Down");
