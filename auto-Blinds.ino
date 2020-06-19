@@ -16,7 +16,7 @@ Stepper steppermotor(STEPS_PER_REV, 8, 10, 9, 11);
 // Positioning constants
 int blindsPos = 0;
 int checks = 0;
-const int CLOSED = 11; // The netSteps value for the blinds to be closed.
+const int CLOSED = 12; // The netSteps value for the blinds to be closed.
 
 // Threshold constants:
 const int lightSunny = 400;
