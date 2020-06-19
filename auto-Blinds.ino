@@ -36,9 +36,10 @@ int newPos = 0;
 
 void setup(){
   Serial.begin(9600);
-  // turning off onboard light
+  
+  // Keeping on onboard light when automode is on.
   pinMode(13, OUTPUT);
-  digitalWrite(13, LOW); 
+  digitalWrite(13, HIGH); 
   
   irrecv.enableIRIn();
   attachInterrupt(digitalPinToInterrupt(RECV_PIN), readIRSignal, RISING);
@@ -65,6 +66,7 @@ void readIRSignal(){
         case 0xFFA25D:
           Serial.println("ON");
           automatic = true;
+          digitalWrite(13, HIGH); 
           break;
         case 0xFF629D:
           Serial.println("TIMER");
@@ -72,6 +74,7 @@ void readIRSignal(){
         case 0xFFE21D:
           Serial.println("OFF");
           automatic = false;
+          digitalWrite(13, LOW); 
           break;
         case 0xFF22DD:
           Serial.println("1");
