@@ -7,7 +7,8 @@ the sun from shining into my eyes which often interrupts my workflow. Some might
 closed", but then what is the point of a window? Might as well be a brick wall. And so I decided to tackle this issue with an arduino, a 
 stepper motor and driver, a photoresistor, and an IR reciver and transmitter.
 
-And with the minimal tools that I had, and no access to a 3D printer, this is what I came up with.\
+And with the minimal tools that I had, and no access to a 3D printer, this is what I came up with.
+
 ### Hardware:
   * The stepper motor was attached using hot glue to the tilt mechanism of the blinds and then nailed to the spine of a binder which was 
   used as a wedge to be fixed in placed between a wall and a chest of drawers right next to the window.
