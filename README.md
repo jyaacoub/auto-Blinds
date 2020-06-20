@@ -12,8 +12,10 @@ And with the minimal tools that I had, and no access to a 3D printer, this is wh
 ### Hardware:
   * The stepper motor was attached using hot glue to the tilt mechanism of the blinds and then nailed to the spine of a binder which was 
   used as a wedge to be fixed in placed between a wall and a chest of drawers right next to the window.
-  * The photoresister was attached to a 220 ohm resistor creating a voltage divider for light intensity inputs. This was then wired up and 
-  placed in the middle of the windowsill.
+  
+  
+  * The photoresister was attached to a 220 ohm resistor creating a voltage divider for light intensity inputs. This was then wired up 
+  and placed in the middle of the windowsill.
   * The IR reciver was scrapped from old christmas lights and wired up with the arduino for reciving IR transmissions from the remote 
   that came with the lights. 
 
