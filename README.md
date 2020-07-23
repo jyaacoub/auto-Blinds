@@ -21,16 +21,15 @@ And with the minimal tools that I had, and no access to a 3D printer, this is wh
   that came with the lights. 
 
 ### Software/ Capabilites:
-I have set up two modes for the blinds which is toggles using the IR remote.
+I have set up two modes for the blinds which is toggled using the IR remote.
   1. *Automatic*: This mode is controlled entirely by the intensity of the light coming through the windows. It will close the blinds if 
-  the light is too intense and if it is dark out. Consequently it also opens by itself in the morning and when it is dawn when the light 
-  isn't as intense. The light intensity is calculated over 10 seconds to get an accurate measurement, and the blinds will only move if 
-  the threshold is met more than a certain amount of times (this is to pervent it from opening and closing every second because of a 
-  couple clouds).
-  2. *Manual*: This mode is controled by the IR remote with the following 4 options: tilt up, tilt down, close blinds (tilt all the way 
+  the light is too intense or if it is dark out. Consequently it also opens up in the morning or when it is dawn when the light intensity
+  has reduced. The light intensity is calculated over a 10 second interval to get an average for a more accurate measurement, and the blinds 
+  will only move if the threshold is met more than a certain amount of times (this is to pervent it from opening and closing every second 
+  on a cloudy day where the light intesity can vary drastically).
+  2. *Manual*: This mode is controlled by the IR remote with the following 4 options: tilt up, tilt down, close blinds (tilt all the way 
   up), and open blinds.
   
-The IR remote sends signals to the arduino through an interrupt, this suspends the current execution and updates that program counter 
-to be the start of a interrupt service routine which alters some flags depending on the IR signal sent.
-  
-  
+The IR reciver causes an interrupt whenever it detects a signal, this suspends the current execution and updates that program counter 
+to be the start of a interrupt service routine which alters some flags depending on the IR signal sent. These flags are used to determine 
+what action to perform.
