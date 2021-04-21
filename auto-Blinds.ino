@@ -1,6 +1,7 @@
 //Include the Arduino Stepper Library
 #include <Stepper.h>
 #define LIGHT_SENSOR A0
+#define INDICATOR_LIGHT 13
 
 // Constants for the motor:
 // Number of steps per internal motor revolution
@@ -19,10 +20,10 @@ int checks = 0;
 const int CLOSED = 12; // The netSteps value for the blinds to be closed.
 
 // Threshold constants:
-const int lightSunny = 400;
+const int lightSunny = 500;
 const int lightDawn = 215;
 const int lightMorning = 215;
-const int lightNight = 30; // Not 0, to stop room lights from keeping it open
+const int lightNight = 90; // Not 0, to stop room lights from keeping it open
 
 // IR stuff
 #include <IRremote.h>  //including infrared remote header file     
@@ -38,14 +39,16 @@ void setup(){
   Serial.begin(9600);
 
   // turning on onboard light when auto mode is on.
-  pinMode(13, OUTPUT);
-  digitalWrite(13, HIGH); 
+  pinMode(INDICATOR_LIGHT, OUTPUT);
+  digitalWrite(INDICATOR_LIGHT, HIGH); 
   
   irrecv.enableIRIn();
   attachInterrupt(digitalPinToInterrupt(RECV_PIN), readIRSignal, RISING);
 }
  
 void loop(){
+//  int light = analogRead(LIGHT_SENSOR);
+//  Serial.println(light);
   if (automatic){
     Serial.println("AUTO");
     autoMode();
@@ -70,7 +73,7 @@ void readIRSignal(){
       case 0xFFA25D:
         Serial.println("ON");
         automatic = true;
-        digitalWrite(13, HIGH); 
+        digitalWrite(INDICATOR_LIGHT, HIGH); 
         break;
       case 0xFF629D:
         Serial.println("TIMER");
@@ -78,7 +81,7 @@ void readIRSignal(){
       case 0xFFE21D:
         Serial.println("OFF");
         automatic = false;
-        digitalWrite(13, LOW); 
+        digitalWrite(INDICATOR_LIGHT, LOW); 
         break;
       case 0xFF22DD:
         Serial.println("1");
