@@ -1,7 +1,9 @@
 //Include the Arduino Stepper Library
 #include <Stepper.h>
-#define LIGHT_SENSOR A0
-#define INDICATOR_LIGHT 13
+#include <IRremote.h>  //including infrared remote header file   
+#define LIGHT_SENSOR A1
+#define INDICATOR_LIGHT 14 // analog input A0 == digital pin 14
+#define TOGGLE_BTN 2 // only 2 and 3 can be used for interupts
 
 // Constants for the motor:
 // Number of steps per internal motor revolution
@@ -15,25 +17,29 @@ int StepsRequired;
 Stepper steppermotor(STEPS_PER_REV, 8, 10, 9, 11);
 
 // Positioning constants
-int blindsPos = 0;
+const int CLOSED = 11; // The netSteps value for the blinds to be closed.
+volatile int blindsPos = 0; // blinds pos when open == 0
 int checks = 0;
-const int CLOSED = 12; // The netSteps value for the blinds to be closed.
+
+// btn values
+bool GO_UP = false; // to tilt up and down repeatively using btn
+volatile int previous_press = 0;
+
 
 // Threshold constants:
-const int lightSunny = 500;
+const int lightSunny = 600;
 const int lightDawn = 215;
 const int lightMorning = 215;
-const int lightNight = 90; // Not 0, to stop room lights from keeping it open
+const int lightNight = 30; // Not 0, to stop room lights from keeping it open
 
-// IR stuff
-#include <IRremote.h>  //including infrared remote header file     
+// IR stuff  
 int RECV_PIN = 3; // the pin where you connect the output pin of IR sensor     
 IRrecv irrecv(RECV_PIN);     
-decode_results results;
-unsigned long key_value = 0;
+volatile decode_results results;
+volatile unsigned long key_value = 0;
 
-boolean automatic = true;
-int newPos = 0;
+volatile boolean automatic = true;
+volatile int newPos = 0;
 
 void setup(){
   Serial.begin(9600);
@@ -41,28 +47,62 @@ void setup(){
   // turning on onboard light when auto mode is on.
   pinMode(INDICATOR_LIGHT, OUTPUT);
   digitalWrite(INDICATOR_LIGHT, HIGH); 
+
+  // enablining button to toggle up and down manually
+  pinMode(TOGGLE_BTN, INPUT_PULLUP);
   
   irrecv.enableIRIn();
-  attachInterrupt(digitalPinToInterrupt(RECV_PIN), readIRSignal, RISING);
+  attachInterrupt(digitalPinToInterrupt(RECV_PIN), readIRSignal, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(TOGGLE_BTN), toggle_blinds, CHANGE);
 }
  
 void loop(){
-//  int light = analogRead(LIGHT_SENSOR);
-//  Serial.println(light);
+//  stepDebugger();
+  int light = analogRead(LIGHT_SENSOR);
+  Serial.println(light);
   if (automatic){
     Serial.println("AUTO");
     autoMode();
     newPos = blindsPos;
   } else{
     manualMode();
-//    Serial.println("MANUAL");
+    Serial.println("MANUAL");
     delay(500);
+  }
+}
+
+void toggle_blinds(){
+//  Serial.println("GOT BTN INTRPT");
+  // ignoring other presses that are within a second of each other
+  if (millis() - previous_press <= 1000){
+    return;
+  }
+  Serial.println("GOT BTN INTRPT");
+  
+  previous_press = millis();
+  if (automatic){
+    automatic = false;
+    digitalWrite(INDICATOR_LIGHT, LOW);
+  } else {
+    if (newPos == CLOSED){ // opened blinds
+      newPos = 0;
+      GO_UP = false;
+    } else if (newPos == 0){
+      if (GO_UP){
+        newPos = CLOSED;
+      } else {
+        newPos = -CLOSED;
+      }
+    } else if (newPos == -CLOSED){
+      newPos = 0;
+      GO_UP = true;
+    }
   }
 }
 
 void readIRSignal(){
 //  delay(1);
-  if (irrecv.decode(&results)){
+  if (irrecv.decode(&results)){ // 0 if no data 1 if data
 //    Serial.println("INTERRUPT");
     Serial.println(results.value, HEX);
     
@@ -127,7 +167,16 @@ void readIRSignal(){
 
 void manualMode(){
 //  Serial.println(newPos);
-  tiltBlinds(newPos);
+  // using a while loop so that the operation can be cancelled midway
+  while (newPos != blindsPos){
+    int dif = newPos - blindsPos;
+
+    if (dif > 0){
+      tiltBlinds(blindsPos+1);
+    } else if (dif < 0){
+      tiltBlinds(blindsPos-1);
+    } // nothing to do if dif == 0
+  }
 }
 
 // Leaves the blinds to be controlled by the light intensity
